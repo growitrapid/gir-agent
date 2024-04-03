@@ -4,25 +4,53 @@
  * Entry point of the application.
  */
 
-import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
+
+// Import the Sea module if the application is running in the Sea environment.
+// Otherwise, import the Node.js module.
+// import { isSea, getAsset } from "node:sea";
 import { validateEnv } from "./src/utils/env";
+import Log from "./src/utils/log";
+import app from "./src/main";
 
 // Clear the console.
 console.clear();
+// Print the greeting message.
+Log.greeting();
+Log.info("Starting the application...");
 
-// Load environment variables from .env file.
-dotenv.config();
+// if (isSea())
+// {
+//   Log.success("Running in Sea environment.");
+//   // Load environment variables from the asset.
+//   const asset = getAsset(".env", "utf8");
+//   if (asset === null) {
+//     Log.error("Failed to load the environment variables.");
+//     process.exit(1);
+//   } else {
+//     const config = dotenv.parse(asset);
+//     process.env = { ...process.env, ...config };
+//     Log.success(`${Object.keys(config).length} Environment variables are loaded successfully.`);
+//   }
+// }
+// else
+{
+  Log.error("Running in non-Sea environment.");
+  // Load environment variables from .env file.
+  const config = dotenv.config();
+  if (config.error) {
+    Log.error("Failed to load the environment variables.");
+    process.exit(1);
+  } else {
+    Log.success(`${Object.keys(config.parsed ?? {}).length} Environment variables are loaded successfully.`);
+  }
+}
+
 // Validate the environment variables.
 process.env = validateEnv(process.env);
 
-const app: Express = express();
+// Start the server.
 const port = parseInt(process.env.PORT || '3000');
-
-app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
-});
-
 app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+  Log.server(`Server is running at http://localhost:${port}`);
 });
