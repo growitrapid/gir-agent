@@ -1,17 +1,19 @@
 /**
  * AGENT: is a program that acts on behalf of another program or user.
- * 
+ *
  * Entry point of the application.
  */
 
 import dotenv from "dotenv";
+import http from "http";
 
 // Import the Sea module if the application is running in the Sea environment.
 // Otherwise, import the Node.js module.
-// import { isSea, getAsset } from "node:sea";
+import { isSea, getAsset } from "node:sea";
 import { validateEnv } from "./src/utils/env";
 import Log from "./src/utils/log";
 import app from "./src/main";
+import createSocketServer from "./src/socket";
 
 // Clear the console.
 console.clear();
@@ -19,22 +21,23 @@ console.clear();
 Log.greeting();
 Log.info("Starting the application...");
 
-// if (isSea())
-// {
-//   Log.success("Running in Sea environment.");
-//   // Load environment variables from the asset.
-//   const asset = getAsset(".env", "utf8");
-//   if (asset === null) {
-//     Log.error("Failed to load the environment variables.");
-//     process.exit(1);
-//   } else {
-//     const config = dotenv.parse(asset);
-//     process.env = { ...process.env, ...config };
-//     Log.success(`${Object.keys(config).length} Environment variables are loaded successfully.`);
-//   }
-// }
-// else
-{
+if (isSea()) {
+  Log.success("Running in Sea environment.");
+  // Load environment variables from the asset.
+  const asset = getAsset(".env", "utf8");
+  if (asset === null) {
+    Log.error("Failed to load the environment variables.");
+    process.exit(1);
+  } else {
+    const config = dotenv.parse(asset);
+    process.env = { ...process.env, ...config };
+    Log.success(
+      `${
+        Object.keys(config).length
+      } Environment variables are loaded successfully.`
+    );
+  }
+} else {
   Log.error("Running in non-Sea environment.");
   // Load environment variables from .env file.
   const config = dotenv.config();
@@ -42,7 +45,11 @@ Log.info("Starting the application...");
     Log.error("Failed to load the environment variables.");
     process.exit(1);
   } else {
-    Log.success(`${Object.keys(config.parsed ?? {}).length} Environment variables are loaded successfully.`);
+    Log.success(
+      `${
+        Object.keys(config.parsed ?? {}).length
+      } Environment variables are loaded successfully.`
+    );
   }
 }
 
@@ -50,7 +57,9 @@ Log.info("Starting the application...");
 process.env = validateEnv(process.env);
 
 // Start the server.
-const port = parseInt(process.env.PORT || '3000');
-app.listen(port, () => {
+const port = parseInt(process.env.PORT || "3000");
+const server = http.createServer(app);
+createSocketServer(server);
+server.listen(port, () => {
   Log.server(`Server is running at http://localhost:${port}`);
 });

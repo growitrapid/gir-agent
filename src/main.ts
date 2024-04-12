@@ -21,5 +21,6 @@ app.get("/ping", (req: Request, res: Response) => {
 
 // Import the routes.
 app.use("/courses", require("./routes/courses/route").default);
+app.use("/verify", require("./routes/verify/route").default);
 
 export default app;

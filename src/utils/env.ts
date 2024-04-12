@@ -3,6 +3,7 @@ import Log from './log';
 
 const envSchema = z.object({
   NODE_ENV: z.string().default('development'),
+  VERSION: z.string().default('1.0.0'),
   PORT: z.string().default('3000'),
   GOOGLE_AI_API_KEY: z.string(),
 });

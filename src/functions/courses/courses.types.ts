@@ -27,7 +27,14 @@ export const COURSE_PROVIDERS = {
   },
 } as const;
 
-export const COURSE_PROVIDER_KEYS = ["coursera", "udemy", "edx", "khanacademy", "others", "selfhosted"] as const;
+export const COURSE_PROVIDER_KEYS = [
+  "coursera",
+  "udemy",
+  "edx",
+  "khanacademy",
+  "others",
+  "selfhosted",
+] as const;
 
 export const COURSERA_COURSE_SCHEMA = z.object({
   title: z.string(),
@@ -58,3 +65,14 @@ export const COURSERA_COURSE_SCHEMA = z.object({
   redirectLink: z.string(),
 });
 export type COURSERA_COURSE_TYPE = z.infer<typeof COURSERA_COURSE_SCHEMA>;
+
+const COURSE_PROVIDERS_SCHEMA = z.object({
+  coursera: COURSERA_COURSE_SCHEMA,
+  udemy: z.object({ redirectLink: z.string() }),
+  edx: z.object({ redirectLink: z.string() }),
+  khanacademy: z.object({ redirectLink: z.string() }),
+  others: z.object({ redirectLink: z.string() }),
+  selfhosted: z.object({ redirectLink: z.string() }),
+});
+
+export type COURSE_PROVIDERS_TYPE = z.infer<typeof COURSE_PROVIDERS_SCHEMA>;

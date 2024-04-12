@@ -5,15 +5,20 @@ class Log {
 
   greeting() {
     console.clear();
-    console.log(chalk.cyanBright(`
+    console.log(
+      chalk.cyanBright(`
    ██████╗ ██╗██████╗        █████╗  ██████╗ ███████╗███╗   ██╗████████╗
   ██╔════╝ ██║██╔══██╗      ██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝
   ██║  ███╗██║██████╔╝█████╗███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║   
   ██║   ██║██║██╔══██╗╚════╝██╔══██║██║   ██║██╔══╝  ██║╚██╗██║   ██║   
   ╚██████╔╝██║██║  ██║      ██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║   
    ╚═════╝ ╚═╝╚═╝  ╚═╝      ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝   
-`));
-    
+`)
+    );
+  }
+
+  raw(...arg: any) {
+    console.log(...this.defaultArg, ...arg);
   }
 
   info(...arg: any) {
@@ -46,9 +51,13 @@ class Log {
 
   route(route: string) {
     const log = new Log();
-    log.defaultArg = [
-      chalk.green(`[ROUTE "${route}"]: `),
-    ];
+    log.defaultArg = [chalk.green(`[ROUTE "${route}"]: `)];
+    return log;
+  }
+
+  socket(...arg: any) {
+    const log = new Log();
+    log.defaultArg = [chalk.yellow(`[SOCKET]: `)];
     return log;
   }
 
@@ -60,11 +69,14 @@ class Log {
     console.log(...this.defaultArg, chalk.green(`[SUCCESS]: `), ...arg);
   }
 
-  custom(color: string, ...arg: any) {
-    console.log(...this.defaultArg, chalk.keyword(color)(`[CUSTOM]: `), ...arg);
+  custom(...arg: any) {
+    const log = new Log();
+    log.defaultArg = arg;
+    return log;
   }
 }
 
 const log = new Log();
 
+export { Log };
 export default log;
