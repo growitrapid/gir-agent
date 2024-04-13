@@ -8,7 +8,11 @@ const app: Express = express();
 // Configure the express application.
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");

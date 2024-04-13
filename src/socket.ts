@@ -1,9 +1,14 @@
 import { Server } from "http";
 import * as socketio from "socket.io";
 import log from "./utils/log";
+import registerCourseSocketRoutes from "./socket_roues/courses";
 
 export default function createSocketServer(server: Server) {
-  const io = new socketio.Server(server);
+  const io = new socketio.Server(server, {
+    cors: {
+      origin: "*",
+    },
+  });
   log.socket().info("Socket server instance is created.");
   log.socket().info("Socket server is listening for connections.");
   log
@@ -21,13 +26,15 @@ export default function createSocketServer(server: Server) {
     log.socket().info(`The client is connected. Socket id: ${socket.id}`);
 
     socket.on("verify", (data) => {
-      log.socket().info("Verifying the client version compatibility.");
-      socket.emit("verify", process.env.VERSION);
+      socket.emit("verify", process.env.VERSION_ENC);
     });
 
     socket.on("disconnect", () => {
       isSocketConnected = false;
       log.socket().info(`The client is disconnected. Socket id: ${socket.id}`);
     });
+
+    // Register all the socket routes.
+    registerCourseSocketRoutes(socket);
   });
 }

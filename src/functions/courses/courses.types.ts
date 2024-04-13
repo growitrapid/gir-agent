@@ -37,6 +37,7 @@ export const COURSE_PROVIDER_KEYS = [
 ] as const;
 
 export const COURSERA_COURSE_SCHEMA = z.object({
+  provider: z.literal("coursera"),
   title: z.string(),
   description: z.string(),
   thumbnail: z.string(),
@@ -66,13 +67,33 @@ export const COURSERA_COURSE_SCHEMA = z.object({
 });
 export type COURSERA_COURSE_TYPE = z.infer<typeof COURSERA_COURSE_SCHEMA>;
 
-const COURSE_PROVIDERS_SCHEMA = z.object({
-  coursera: COURSERA_COURSE_SCHEMA,
-  udemy: z.object({ redirectLink: z.string() }),
-  edx: z.object({ redirectLink: z.string() }),
-  khanacademy: z.object({ redirectLink: z.string() }),
-  others: z.object({ redirectLink: z.string() }),
-  selfhosted: z.object({ redirectLink: z.string() }),
-});
+export const COURSE_PROVIDERS_SCHEMA = z.discriminatedUnion("provider", [
+  COURSERA_COURSE_SCHEMA,
+  z.object({
+    provider: z.literal("udemy"),
+    thumbnail: z.string(),
+    redirectLink: z.string(),
+  }),
+  z.object({
+    provider: z.literal("edx"),
+    thumbnail: z.string(),
+    redirectLink: z.string(),
+  }),
+  z.object({
+    provider: z.literal("khanacademy"),
+    thumbnail: z.string(),
+    redirectLink: z.string(),
+  }),
+  z.object({
+    provider: z.literal("others"),
+    thumbnail: z.string(),
+    redirectLink: z.string(),
+  }),
+  z.object({
+    provider: z.literal("selfhosted"),
+    thumbnail: z.string(),
+    redirectLink: z.string(),
+  }),
+]);
 
 export type COURSE_PROVIDERS_TYPE = z.infer<typeof COURSE_PROVIDERS_SCHEMA>;

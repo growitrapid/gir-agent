@@ -7,12 +7,15 @@ import { NodeHtmlMarkdown } from "node-html-markdown";
 export default async function scrapCourse({
   provider,
   url,
+  noLog = false,
 }: {
   provider: (typeof COURSE_PROVIDER_KEYS)[number];
   url: string;
+  noLog?: boolean;
 }): Promise<string> {
   const log = new Log();
   log.defaultArg = [chalk.yellow(`[SCRAPPER]: `)];
+  log.noLog = noLog;
 
   try {
     // Fetch the courses.

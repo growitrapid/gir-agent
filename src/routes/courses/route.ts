@@ -10,6 +10,7 @@ const router = Router();
 // Define the request schema.
 const requestSchema = z.object({
   url: z.string(),
+  thumbnail: z.string(),
   provider: z.enum(COURSE_PROVIDER_KEYS),
 });
 
@@ -18,7 +19,7 @@ router.post("/scrap", async (req, res) => {
   try {
     // Validate the request.
     const request = requestSchema.parse(req.body);
-    const { url, provider } = request;
+    const { url, provider, thumbnail } = request;
 
     console.log("");
     Log.route("POST /scrap").info(
@@ -33,7 +34,7 @@ router.post("/scrap", async (req, res) => {
       });
     }
 
-    const data = await getJSONData({ provider, url });
+    const data = await getJSONData({ provider, url, thumbnail });
 
     if ("error" in data) {
       return res.status(400).json({

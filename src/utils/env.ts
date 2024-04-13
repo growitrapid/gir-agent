@@ -1,10 +1,11 @@
-import { z } from 'zod';
-import Log from './log';
+import { z } from "zod";
+import Log from "./log";
 
 const envSchema = z.object({
-  NODE_ENV: z.string().default('development'),
-  VERSION: z.string().default('1.0.0'),
-  PORT: z.string().default('3000'),
+  NODE_ENV: z.string().default("development"),
+  VERSION: z.string().default("1.0.0"),
+  VERSION_ENC: z.string().default("1.0.0"),
+  PORT: z.string().default("3000"),
   GOOGLE_AI_API_KEY: z.string(),
 });
 
@@ -22,7 +23,7 @@ export const validateEnv = (env: NodeJS.ProcessEnv): Env => {
     return envSchema.parse(env);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      Log.error('Failed to validate the environment variables.');
+      Log.error("Failed to validate the environment variables.");
       Log.error(error.toString());
       process.exit(1);
     }

@@ -4,13 +4,17 @@ import getGenAIModel from "../../ai/gemini";
 import coursera from "./examples/coursera";
 import chalk from "chalk";
 
-async function GenerateJSONFromMD(md: string): Promise<{
+async function GenerateJSONFromMD(
+  md: string,
+  noLog: boolean = false
+): Promise<{
   data: string;
   response: GenerateContentCandidate[] | undefined;
   error?: string;
 }> {
   const log = new Log();
   log.defaultArg = [chalk.yellow(`[SCRAPPER]: `)];
+  log.noLog = noLog;
 
   try {
     // Get the model.

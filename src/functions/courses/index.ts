@@ -11,13 +11,17 @@ import { FinishReason, SafetyRating } from "@google/generative-ai";
 
 export default async function getJSONData({
   url,
+  thumbnail,
   provider,
+  noLog = false,
 }: {
   url: string;
+  thumbnail: string;
   provider: (typeof COURSE_PROVIDER_KEYS)[number];
+  noLog?: boolean;
 }): Promise<
   | {
-      data: COURSE_PROVIDERS_TYPE[typeof provider];
+      data: COURSE_PROVIDERS_TYPE;
       response: {
         finishReason: FinishReason | "Unknown";
         safetyRatings: SafetyRating[];
@@ -31,14 +35,15 @@ export default async function getJSONData({
 > {
   const log = new Log();
   log.defaultArg = [chalk.yellow(`[SCRAPPER]: `)];
+  log.noLog = noLog;
 
   try {
     // Get the course content.
-    const rawData = await scrapCourse({ provider, url });
+    const rawData = await scrapCourse({ provider, url, noLog });
 
     // Generate JSON from the Markdown.
     log.info("Generating JSON from Markdown...");
-    const generatedJSONData = await GenerateJSONFromMD(rawData);
+    const generatedJSONData = await GenerateJSONFromMD(rawData, noLog);
     log.info("JSON data generated stopped.");
     log.info(
       `Content Generation stopped reason being: ${
@@ -68,10 +73,10 @@ export default async function getJSONData({
       log.info("Success in generating JSON from Markdown.");
     }
 
-    const data = JSON.parse(
-      generatedJSONData.data
-    ) as COURSE_PROVIDERS_TYPE[typeof provider];
+    const data = JSON.parse(generatedJSONData.data) as COURSE_PROVIDERS_TYPE;
     data.redirectLink = url;
+    data.provider = provider;
+    data.thumbnail = thumbnail;
 
     // Replace ann null values with empty strings.
     const replaceNullValues = (obj: any) => {
