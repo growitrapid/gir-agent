@@ -53,15 +53,18 @@ export default function getGenAIModel(params?: {
     ];
 
     // Get the generative model.
-    const model = genAI.getGenerativeModel({
-      model: params?.model || "gemini-1.5-pro-latest",
-      generationConfig,
-      safetySettings,
-      // @ts-ignore
-      systemInstructions: params?.systemInstructions || "",
-    }, {
-      apiVersion: "v1beta",
-    });
+    const model = genAI.getGenerativeModel(
+      {
+        model: params?.model || "gemini-1.5-pro",
+        generationConfig,
+        safetySettings,
+        // @ts-ignore
+        systemInstructions: params?.systemInstructions || "",
+      },
+      {
+        apiVersion: "v1beta",
+      }
+    );
 
     return model;
   } catch (error: any) {

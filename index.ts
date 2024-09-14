@@ -14,6 +14,7 @@ import { validateEnv } from "./src/utils/env";
 import log from "./src/utils/log";
 import app from "./src/main";
 import createSocketServer from "./src/socket";
+import createPrompter from "./src/prompter";
 
 // Clear the console.
 console.clear();
@@ -55,6 +56,11 @@ if (isSea()) {
 
 // Validate the environment variables.
 process.env = validateEnv(process.env);
+
+// Prompts the user.
+createPrompter(() => {
+  log.info("Prompter is completed.");
+});
 
 // Start the server.
 const port = parseInt(process.env.PORT || "3000");
